@@ -14,11 +14,7 @@ logs/**
 !logs/.gitkeep
 
 # Built files (Github pages)
-dist/**
-
-!dist/**/
-!dist/**/_*
-!dist/**/.gitkeep
+dist/
 
 # Credentials
 private.yaml
