@@ -1,0 +1,45 @@
+# Directory Structure from __basedir
+dir:
+  logs: logs/
+
+  output:
+    base: dist/
+
+    css: css/
+    javascript: js/
+
+    images: img/
+    videos: img/
+
+    fonts: css/
+  
+  assets:
+    images: src/assets/images/
+    videos: src/assets/videos/
+    fonts: src/assets/fonts/
+  
+  preprocessed:
+    scripts: src/scripts/
+    styling: src/styles/
+    pages: src/pages/
+
+# Page structure
+pages:
+  static:
+    -
+      route: 'index'
+      file: 'in_construction.pug'
+    -
+      route: '404'
+      file: 'not_found.pug'
+
+# Misc data, passed to every build process as variables
+data: null
+
+# Other website files
+cname: fold.com.br
+robots:
+  disallow: 
+    - /404.html
+  allow:
+    - /

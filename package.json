@@ -1,0 +1,32 @@
+{
+  "name": "fold_blog",
+  "version": "1.0.0",
+  "description": "My personal Static Blog",
+  "main": "bin/build.js",
+  "scripts": {
+    "test": "node bin/verify.js",
+    "watch": "node bin/watch.js",
+    "start": "node bin/build.js",
+    "poststart": "node bin/commit.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fold-software/blog-generator.git"
+  },
+  "author": "Ygor de Paula",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fold-software/blog-generator/issues"
+  },
+  "homepage": "https://github.com/fold-software/blog-generator#readme",
+  "dependencies": {
+    "bundle-js": "^1.0.3",
+    "chokidar": "^3.4.0",
+    "coffeescript": "^2.5.1",
+    "express": "^4.17.1",
+    "js-yaml": "^3.14.0",
+    "pug": "^3.0.0",
+    "stylus": "^0.54.7",
+    "winston": "^3.3.3"
+  }
+}
