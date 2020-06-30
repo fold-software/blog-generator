@@ -66,18 +66,21 @@ let video_files = fs.readdirSync(path.join(__basedir, CONFIG.dir.assets.videos))
 for(let video of video_files) {
     if (!fs.lstatSync(path.join(__basedir, CONFIG.dir.assets.videos, video)).isDirectory()) {
         logger.info(`Compressing ${video}`);
-        child_process.execFileSync('ffmpeg', [
+        child_process.spawnSync('ffmpeg', [
             '-i', path.join(__basedir, CONFIG.dir.assets.videos, video),
             '-vf', `scale='min(${CONFIG.video_options.scaling.width},iw)':'min(${CONFIG.video_options.scaling.height},ih)':force_original_aspect_ratio=decrease`,
-            '-vcodec', 'libx265',
-            '-crf', '28',
+            '-vcodec', 'libx264',
+            '-crf', '23',
+            '-acodec', 'aac',
+            '-strict',
+            '-2',
             path.join(__basedir, CONFIG.dir.output.base, CONFIG.dir.output.videos, video)
         ])
         logger.info(`${video} compressed`);
 
         if(CONFIG.video_options.poster.generate) {
             logger.info(`Generating poster for ${video}`);
-            child_process.execFileSync('ffmpeg', [
+            child_process.spawnSync('ffmpeg', [
                 '-i', path.join(__basedir, CONFIG.dir.assets.videos, video),
                 '-vf', `scale='min(${CONFIG.video_options.scaling.width},iw)':'min(${CONFIG.video_options.scaling.height},ih)':force_original_aspect_ratio=decrease`,
                 '-vframes', '1',
@@ -176,16 +179,18 @@ for(let script of script_files) {
             path.join(__basedir, 'node_modules/coffee-stir/bin/cli.js'),
             path.join(__basedir, CONFIG.dir.preprocessed.scripts, script)
         ]);
-        console.log(coffee_src);
-        coffee_src = coffee_src.stdout.toString().split('\n').slice(0, -1).join('\n');
+        coffee_src = coffee_src.stdout.toString().split('\n').slice(0, -2).join('\n');
+
         for (let key in CONFIG.data) {
             if (CONFIG.data.hasOwnProperty(key))
                 coffee_src = `${key} = ${JSON.stringify(CONFIG.data[key])};\n` + coffee_src;
         }
-        console.log(coffee_src);
-        let js_src = coffee.compile(coffee_src);     
-        console.log(js_src);
-        fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, CONFIG.dir.output.javascript, script.split('.').slice(0, -1).join('.') + '.js'), uglify.minify(js_src).code);
+        let js_src = coffee.compile(coffee_src, {bare: true});
+        let js_min = uglify.minify(js_src, {
+            compress: { toplevel: true, unused: true, dead_code: true, drop_console: true },
+            mangle: false
+        });
+        fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, CONFIG.dir.output.javascript, script.split('.').slice(0, -1).join('.') + '.js'), js_min.code);
         logger.info(`${script} Compiled`);
     }
 }
@@ -203,7 +208,7 @@ for (let page of CONFIG.pages.static) {
     let src = fs.readFileSync(path.join(__basedir, CONFIG.dir.preprocessed.pages, page.file), 'utf8');
     logger.info(`Opened file contents ${page.file}`);
 
-    let fn = pug.compile( src, { basedir: path.join(__basedir, CONFIG.dir.preprocessed.pages) });
+    let fn = pug.compile( src, { basedir: path.join(__basedir, CONFIG.dir.preprocessed.pages), filename: path.join(__basedir, CONFIG.dir.preprocessed.pages, page.file) });
     let html = fn(CONFIG.data);
     logger.info(`Rendered page ${page.file}`);
 
@@ -264,3 +269,7 @@ robots += '\nsitemap: https://fold.com.br/sitemap.xml'
 
 fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, 'robots.txt'), robots);
 logger.info(`Written robots.txt`);
+
+logger.info(`Copying favicon.ico`);
+fs.copyFileSync(path.join(__basedir, CONFIG.favicon.input), path.join(__basedir, CONFIG.dir.output.base, CONFIG.favicon.output));
+logger.info(`Copied favicon.ico`);

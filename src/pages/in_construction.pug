@@ -1,15 +1,16 @@
 doctype html
 html(lang="pt")
     head
-        meta(charset="UTF-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        include lib/head.pug
+        
         link(rel='canonical', href="https://fold.com.br/")
 
         title Fold | Em construção
 
         link(rel="stylesheet", href="css/in_construction.css")
     body
-        video(src="/img/construction_banner.mp4", autoplay, playsinline, loop, muted, poster="/img/construction_banner_poster.jpg")
+        video(autoplay, playsinline, loop, muted, poster="/img/construction_banner_poster.jpg")
+            source(src="/img/construction_banner.mp4", type="video/mp4")
         main
             img(src='/img/logo_base.svg', alt='Fold logo')
             .content

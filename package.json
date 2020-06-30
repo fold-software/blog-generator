@@ -21,6 +21,7 @@
   "homepage": "https://github.com/fold-software/blog-generator#readme",
   "dependencies": {
     "bundle-js": "^1.0.3",
+    "cheerio": "^1.0.0-rc.3",
     "chokidar": "^3.4.0",
     "coffee-stir": "0.0.31",
     "coffeescript": "^2.5.1",
@@ -31,6 +32,7 @@
     "nib": "^1.1.2",
     "pug": "^3.0.0",
     "sharp": "^0.25.4",
+    "socket.io": "^2.3.0",
     "stylus": "^0.54.7",
     "svgo-sync": "^0.5.1",
     "uglify-js": "^3.10.0",

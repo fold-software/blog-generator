@@ -1,5 +1,5 @@
 # Node.js and NPM
-node_modules/
+node_modules
 *.log
 npm-debug.log*
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -14,7 +14,7 @@ logs/**
 !logs/.gitkeep
 
 # Built files (Github pages)
-dist/
+dist
 
 # Credentials
 private.yaml

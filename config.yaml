@@ -43,9 +43,14 @@ image_options:
       quality: 90
       progressive: true
 
+# Options for watcher
+watch:
+  server:
+    port: 8080
+
 # Misc data, passed to every build process as variables
 data: 
-  ola: "Hallo Wurld!"
+  colors_fold_black: "#1D1D1F"
 
 # Page structure
 pages:
@@ -69,3 +74,6 @@ robots:
     - /404.html
   allow:
     - /
+favicon:
+  input: src/assets/favicon.ico
+  output: favicon.ico
