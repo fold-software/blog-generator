@@ -1,0 +1,36 @@
+@import 'lib/font_face.styl'
+@import 'lib/color.styl'
+
+reset-html5()
+body, html
+    margin 0
+    padding 0
+
+    background-color colors_fold_white
+
+@import 'lib/banner.styl'
+
+header
+    background-image url('/img/header-sobre.jpg')
+    background-position center
+    background-size cover
+
+    h1, h2, p, a { color: colors_fold_white }
+    a:hover { color: white }
+
+@import 'lib/article.styl'
+
+main h1 
+    font-family 'Quicksand'
+    font-size 4vw
+    variant-weight 700
+
+    margin -1vh 0
+    margin-bottom 3vh
+    
+    @media screen and (min-width: 600px)
+        font-size 1.8vw
+        margin-left 2em
+    
+    @media screen and (max-width: 600px)
+        text-align center

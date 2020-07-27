@@ -3,6 +3,8 @@ const path          = require('path');
 const yaml          = require('js-yaml');
 
 const pug           = require('pug');
+const marked        = require('marked');
+const cheerio       = require('cheerio');
 
 const coffee        = require('coffeescript');
 const uglify        = require('uglify-js');
@@ -147,24 +149,23 @@ logger.info(`Preprocessing stylesheets`);
 let style_files = fs.readdirSync(path.join(__basedir, CONFIG.dir.preprocessed.styling));
 for(let style of style_files) {
     if (!fs.lstatSync(path.join(__basedir, CONFIG.dir.preprocessed.styling, style)).isDirectory()) {
-        logger.info(`Compiling ${style}`);
-        let styl = fs.readFileSync(path.join(__basedir, CONFIG.dir.preprocessed.styling, style));
-        let css = stylus(styl.toString())
-            .set('filename', path.join(__basedir, CONFIG.dir.preprocessed.styling, style))
-            .set('compress', true)
-            .include(path.join(__basedir, CONFIG.dir.preprocessed.styling))
-            .use(nib())
-            .import('nib')
-        
-        for (let key in CONFIG.data) {
-            if (CONFIG.data.hasOwnProperty(key)) {
-                let value = CONFIG.data[key];
-                css.define(key, value);
-            }
-        }
+        if (path.extname(style) == '.css') {
+            logger.info(`Copying ${style}`);
+            fs.copyFileSync(path.join(__basedir, CONFIG.dir.preprocessed.styling, style), path.join(__basedir, CONFIG.dir.output.base, CONFIG.dir.output.css, style));
+            logger.info(`${style} copied`);
+        } else {
+            logger.info(`Compiling ${style}`);
+            let styl = fs.readFileSync(path.join(__basedir, CONFIG.dir.preprocessed.styling, style));
+            let css = stylus(styl.toString())
+                .set('filename', path.join(__basedir, CONFIG.dir.preprocessed.styling, style))
+                .set('compress', true)
+                .include(path.join(__basedir, CONFIG.dir.preprocessed.styling))
+                .use(nib())
+                .import('nib')
 
-        fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, CONFIG.dir.output.css, style.split('.').slice(0, -1).join('.') + '.css'), css.render());
-        logger.info(`${style} Compiled`);
+            fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, CONFIG.dir.output.css, style.split('.').slice(0, -1).join('.') + '.css'), css.render());
+            logger.info(`${style} Compiled`);
+        }
     }
 }
 logger.info(`Stylesheets Compiled`);
@@ -173,25 +174,32 @@ logger.info(`Preprocessing scripts`);
 let script_files = fs.readdirSync(path.join(__basedir, CONFIG.dir.preprocessed.scripts));
 for(let script of script_files) {
     if (!fs.lstatSync(path.join(__basedir, CONFIG.dir.preprocessed.scripts, script)).isDirectory()) {
-        logger.info(`Compiling ${script}`);
+        if (path.extname(script) == '.js') {
+            logger.info(`Copying ${script}`);
+            fs.copyFileSync(path.join(__basedir, CONFIG.dir.preprocessed.scripts, script), path.join(__basedir, CONFIG.dir.output.base, CONFIG.dir.output.javascript, script));
+            logger.info(`${script} copied`);
+        } else {
+            logger.info(`Compiling ${script}`);
 
-        let coffee_src = child_process.spawnSync('node', [
-            path.join(__basedir, 'node_modules/coffee-stir/bin/cli.js'),
-            path.join(__basedir, CONFIG.dir.preprocessed.scripts, script)
-        ]);
-        coffee_src = coffee_src.stdout.toString().split('\n').slice(0, -2).join('\n');
+            let coffee_src = child_process.spawnSync('node', [
+                path.join(__basedir, 'node_modules/coffee-stir/bin/cli.js'),
+                path.join(__basedir, CONFIG.dir.preprocessed.scripts, script)
+            ]);
+            coffee_src = coffee_src.stdout.toString().split('\n').slice(0, -2).join('\n');
 
-        for (let key in CONFIG.data) {
-            if (CONFIG.data.hasOwnProperty(key))
-                coffee_src = `${key} = ${JSON.stringify(CONFIG.data[key])};\n` + coffee_src;
+            let js_src = coffee.compile(coffee_src, {bare: true});
+            logger.info(`${script} Compiled`);
+
+            logger.info(`Minifying ${script}`);
+
+            let js_min = uglify.minify(js_src, {
+                compress: { unused: true, dead_code: true, drop_console: true },
+                mangle: false
+            });
+
+            fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, CONFIG.dir.output.javascript, script.split('.').slice(0, -1).join('.') + '.js'), js_min.code);
+            logger.info(`${script} Minified`);
         }
-        let js_src = coffee.compile(coffee_src, {bare: true});
-        let js_min = uglify.minify(js_src, {
-            compress: { toplevel: true, unused: true, dead_code: true, drop_console: true },
-            mangle: false
-        });
-        fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, CONFIG.dir.output.javascript, script.split('.').slice(0, -1).join('.') + '.js'), js_min.code);
-        logger.info(`${script} Compiled`);
     }
 }
 logger.info(`Scripts Compiled`);
@@ -208,14 +216,268 @@ for (let page of CONFIG.pages.static) {
     let src = fs.readFileSync(path.join(__basedir, CONFIG.dir.preprocessed.pages, page.file), 'utf8');
     logger.info(`Opened file contents ${page.file}`);
 
-    let fn = pug.compile( src, { basedir: path.join(__basedir, CONFIG.dir.preprocessed.pages), filename: path.join(__basedir, CONFIG.dir.preprocessed.pages, page.file) });
-    let html = fn(CONFIG.data);
+    let fn = pug. compile( src, { basedir: path.join(__basedir, CONFIG.dir.preprocessed.pages), filename: path.join(__basedir, CONFIG.dir.preprocessed.pages, page.file) });
+    let html = fn();
     logger.info(`Rendered page ${page.file}`);
 
     fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, page.route + '.html'), html);
     logger.info(`Written page to file ${page.route}.html`);
 }
 logger.info(`Finished static pages`);
+
+logger.info(`Building blog`);
+let post_template = pug.compile(
+    fs.readFileSync(path.join(__basedir, CONFIG.dir.preprocessed.pages, CONFIG.pages.blog.posts.file), 'utf8')
+    , {
+        basedir: path.join(__basedir, CONFIG.dir.preprocessed.pages),
+        filename: path.join(__basedir, CONFIG.dir.preprocessed.pages, CONFIG.pages.blog.posts.file)
+    }
+);
+
+let index_template = pug.compile(
+    fs.readFileSync(path.join(__basedir, CONFIG.dir.preprocessed.pages, CONFIG.pages.blog.indexing.file), 'utf8')
+    , {
+        basedir: path.join(__basedir, CONFIG.dir.preprocessed.pages),
+        filename: path.join(__basedir, CONFIG.dir.preprocessed.pages, CONFIG.pages.blog.indexing.file)
+    }
+);
+
+let full_post_list = [];
+
+for (let category of CONFIG.pages.blog.structure.categories) {
+    logger.info(`Adding ${category.name} folder`);
+    if(!fs.existsSync(path.join(__basedir, CONFIG.dir.output.base, category.index.route))) fs.mkdirSync(path.join(__basedir, CONFIG.dir.output.base, category.index.route));
+    if(!fs.existsSync(path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets'))) fs.mkdirSync(path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets'));
+    logger.info(`${category.name} folder created at ${path.join(__basedir, CONFIG.dir.output.base, category.index.route)}`)
+
+    let category_post_list = [];
+
+    logger.info(`Building blog posts`);
+    let post_folders = fs.readdirSync(path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder));
+    for(let post of post_folders) {
+        if (fs.lstatSync(path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder, post)).isDirectory()) {
+            logger.info(`Building blog post from ${post}`);
+
+            let post_info = yaml.load(fs.readFileSync(path.join(CONFIG.pages.blog.structure.base, category.folder, post, 'info.yaml'), 'utf8'));
+            logger.info(`${post} info loaded`);
+
+            logger.info(`Building ${post} assets`);
+            let post_assets = fs.readdirSync(path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder, post, 'assets'));
+            for(let asset of post_assets) {
+                switch (path.extname(asset)) {
+                    case '.mp4':
+                        logger.info(`Compressing ${asset} as video`);
+                        child_process.spawnSync('ffmpeg', [
+                            '-i', path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder, post, 'assets', asset),
+                            '-vf', `scale='min(${CONFIG.video_options.scaling.width},iw)':'min(${CONFIG.video_options.scaling.height},ih)':force_original_aspect_ratio=decrease`,
+                            '-vcodec', 'libx264',
+                            '-crf', '23',
+                            '-acodec', 'aac',
+                            '-strict',
+                            '-2',
+                            path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + "_" + asset)
+                        ])
+                        logger.info(`${asset} compressed`);
+
+                        if(CONFIG.video_options.poster.generate) {
+                            logger.info(`Generating poster for ${asset}`);
+                            child_process.spawnSync('ffmpeg', [
+                                '-i', path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder, post, 'assets', asset),
+                                '-vf', `scale='min(${CONFIG.video_options.scaling.width},iw)':'min(${CONFIG.video_options.scaling.height},ih)':force_original_aspect_ratio=decrease`,
+                                '-vframes', '1',
+                                path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + "_" + asset.split('.').slice(0, -1).join('.') + CONFIG.video_options.poster.suffix + '.jpg')
+                            ])
+                            logger.info(`Poster for ${asset} generated`);
+                        }
+                        
+                        break;
+                    case '.svg': case '.svgz':
+                        let svg = fs.readFileSync(path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder, post, 'assets', asset));
+                        svg = svgo_instance.optimizeSync(svg, {path: path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder, post, 'assets', asset)});
+                        fs.writeFileSync(path.join(__basedir,  CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + "_" + asset), svg.data);
+                        logger.info(`${asset} compressed`);
+                        break;
+                    case '.png': case '.jpg': case '.jpeg':
+                        deasync_p(
+                            sharp(fs.readFileSync(path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder, post, 'assets', asset)))
+                                .resize(CONFIG.image_options.scaling.width, CONFIG.image_options.scaling.height, {fit: sharp.fit.inside, withoutEnlargement: true})
+                                .toFormat(CONFIG.image_options.format.filetype, CONFIG.image_options.format.options)
+                                .toFile(path.join(__basedir,  CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + "_" + asset.split('.').slice(0, -1).join('.') + CONFIG.image_options.format.extension))
+                        );
+                        logger.info(`${asset} compressed`);
+                        break;
+                    case '.coffee':
+                        let coffee_src = child_process.spawnSync('node', [
+                            path.join(__basedir, 'node_modules/coffee-stir/bin/cli.js'),
+                            path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder, post, 'assets', asset)
+                        ]);
+                        coffee_src = coffee_src.stdout.toString().split('\n').slice(0, -2).join('\n');
+                
+                        let js_src = coffee.compile(coffee_src, {bare: true});
+                        let js_min = uglify.minify(js_src, {
+                            compress: { unused: true, dead_code: true, drop_console: true },
+                            mangle: false
+                        });
+                        fs.writeFileSync(path.join(__basedir,  CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + "_" + asset.split('.').slice(0, -1).join('.') + '.js'), js_min.code);
+                        logger.info(`${asset} Compiled`);
+                        break;
+                    case '.styl':
+                        let styl = fs.readFileSync(path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder, post, 'assets', asset));
+                        let css = stylus(styl.toString())
+                            .set('filename', path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder, post, 'assets', asset))
+                            .set('compress', true)
+                            .include(path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder, post, 'assets/'))
+                            .use(nib())
+                            .import('nib')
+
+                        fs.writeFileSync(path.join(__basedir,  CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + "_" + asset.split('.').slice(0, -1).join('.') + '.css'), css.render());
+                        logger.info(`${asset} Compiled`);
+                        break;
+                    default:
+                        fs.copyFileSync(path.join(__basedir, CONFIG.pages.blog.structure.base, category.folder, post, 'assets', asset), path.join(__basedir,  CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + "_" + asset));
+                        logger.info(`${asset} Copied`);
+                        break;
+                }
+            }
+            logger.info(`Assets from ${post} built`);
+
+            logger.info(`Generating post thumbnail for ${post}`);
+            deasync_p(
+                sharp(fs.readFileSync(path.join(CONFIG.pages.blog.structure.base, category.folder, post, 'thumbnail.jpg')))
+                    .resize(CONFIG.image_options.extra.miniature.width, CONFIG.image_options.extra.miniature.height, {fit: sharp.fit.cover, withoutEnlargement: true})
+                    .toFormat(CONFIG.image_options.format.filetype, CONFIG.image_options.format.options)
+                    .toFile(path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + '_thumbnail-miniature.' + CONFIG.image_options.format.extension))
+            );
+
+            deasync_p(
+                sharp(fs.readFileSync(path.join(CONFIG.pages.blog.structure.base, category.folder, post, 'thumbnail.jpg')))
+                    .resize(CONFIG.image_options.extra.opengraph.width, CONFIG.image_options.extra.opengraph.height, {fit: sharp.fit.cover, withoutEnlargement: true})
+                    .toFormat(CONFIG.image_options.format.filetype, CONFIG.image_options.format.options)
+                    .toFile(path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + '_open-graph.' + CONFIG.image_options.format.extension))
+            );
+
+            deasync_p(
+                sharp(fs.readFileSync(path.join(CONFIG.pages.blog.structure.base, category.folder, post, 'thumbnail.jpg')))
+                    .resize(CONFIG.image_options.scaling.width, CONFIG.image_options.scaling.height, {fit: sharp.fit.cover, withoutEnlargement: true})
+                    .toFormat(CONFIG.image_options.format.filetype, CONFIG.image_options.format.options)
+                    .toFile(path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + '_thumbnail-fullsize.' + CONFIG.image_options.format.extension))
+            );
+            logger.info(`${post} thumbnail generated`);
+
+            logger.info(`Writting ${post} html`);
+            let post_text = marked(fs.readFileSync(path.join(CONFIG.pages.blog.structure.base, category.folder, post, 'post.md'), 'utf8'));
+            let $ = cheerio.load(post_text);
+
+            $("img[src$='.mp4']").each((idx, el) => {
+                let video_node = `<video controls>
+                    <source src="/${category.index.route}/assets/${post_info.prefix}_${$(el).attr('src')}" type="video/mp4"></source>
+                </video>`
+
+                $(el).after(video_node);
+
+                if(CONFIG.video_options.poster.generate) {
+                    $(el)
+                        .next()
+                        .attr('poster', `/${category.index.route}/assets/${post_info.prefix}_${$(el).attr('src').split('.').slice(0, -1).join('.')}${CONFIG.video_options.poster.suffix}.jpg`)
+                }
+
+                $(el).remove();
+            })
+
+            $("img").each((idx, el) => {
+                if($(el).attr('src')[0] != '/') {
+                    if($(el).attr('src').split('.').slice(-1) == 'svg' || $(el).attr('src').split('.').slice(-1) == 'svgz')
+                        $(el).attr('src', `/${category.index.route}/assets/${post_info.prefix}_${$(el).attr('src')}`)
+                    else
+                        $(el).attr('src', `/${category.index.route}/assets/${post_info.prefix}_${$(el).attr('src').split('.').slice(0, -1).join('.') + CONFIG.image_options.format.extension}`)
+                }
+            })
+
+            $("script[src]").each((idx, el) => {
+                if($(el).attr('src')[0] != '/') 
+                    $(el).attr('src', `/${category.index.route}/assets/${post_info.prefix}_${$(el).attr('src')}`)
+            })
+
+            $("link[rel='stylesheet']").each((idx, el) => {
+                if($(el).attr('href')[0] != '/') 
+                    $(el).attr('href', `/${category.index.route}/assets/${post_info.prefix}_${$(el).attr('href')}`)
+            })
+
+            let post_html = post_template({
+                title: post_info.title,
+                slug: post_info.slug,
+                date: post_info.date,
+                url: category.index.route + '/' + post + '.html',
+                text: $.html(),
+                thumbnail: {
+                    og: '/' + category.index.route + '/assets/' + post_info.prefix + '_open-graph.' + CONFIG.image_options.format.extension,
+                    full: '/' + category.index.route + '/assets/' + post_info.prefix + '_thumbnail-fullsize.' + CONFIG.image_options.format.extension,
+                    miniature: '/' + category.index.route + '/assets/' + post_info.prefix + '_thumbnail-miniature.' + CONFIG.image_options.format.extension
+                },
+                category: {
+                    name: category.name,
+                    index: category.index.generate ? ('/' + category.index.route + '/') : ('/'),
+                    data: category.data
+                }
+            });
+
+            fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, category.index.route, post + '.html'), post_html);
+            logger.info(`Written blog post to file ${path.join(__basedir, CONFIG.dir.output.base, category.index.route, post + '.html')}`);
+
+            post_info.thumbnail = {
+                og: '/' + category.index.route + '/assets/' + post_info.prefix + '_open-graph.' + CONFIG.image_options.format.extension,
+                full: '/' + category.index.route + '/assets/' + post_info.prefix + '_thumbnail-fullsize.' + CONFIG.image_options.format.extension,
+                miniature: '/' + category.index.route + '/assets/' + post_info.prefix + '_thumbnail-miniature.' + CONFIG.image_options.format.extension
+            }
+
+            post_info.category = {
+                name: category.name,
+                index: category.index.generate ? ('/' + category.index.route + '/') : ('/'),
+                data: category.data
+            }
+
+            post_info.url = '/' + category.index.route + '/' + post + '.html'
+
+            category_post_list.push(post_info);
+        }
+    }
+    logger.info(`Finished blog pages`);
+
+    if (category.index.generate) {
+        logger.info(`Building blog category page`);
+        let index_html = index_template({
+            name: category.name,
+            route: '/' + category.index.route + '/',
+            data: category.data,
+            posts: category_post_list
+        })
+        fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'index.html'), index_html);
+        logger.info(`Finished blog category page`);
+    }
+
+    full_post_list = full_post_list.concat(category_post_list);
+}
+
+logger.info(`Building blog index page`);
+
+let index_blog = pug.compile(
+    fs.readFileSync(path.join(__basedir, CONFIG.dir.preprocessed.pages, CONFIG.pages.blog.indexing.file), 'utf8')
+    , {
+        basedir: path.join(__basedir, CONFIG.dir.preprocessed.pages),
+        filename: path.join(__basedir, CONFIG.dir.preprocessed.pages, CONFIG.pages.blog.indexing.file)
+    }
+);
+
+let index_html = index_blog({
+    route: '/' + CONFIG.pages.blog.indexing.route + '.html',
+    data: CONFIG.pages.blog.indexing.data,
+    posts: full_post_list
+});
+
+fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base,  CONFIG.pages.blog.indexing.route + '.html'), index_html);
+logger.info(`Finished blog index page`);
+
+logger.info(`Finished blog`);
 
 logger.info(`Finished page building`);
 

@@ -1,0 +1,48 @@
+doctype html
+html(lang="pt")
+    head
+        include lib/head.pug
+        
+        link(rel='canonical', href="https://fold.com.br/" + url)
+
+        title='Fold | ' + category.name + ' | ' + title
+        meta(name="description", content=slug)
+
+        meta(property="og:type", content="article")
+        meta(property="article:published_time", content=(date.getFullYear() + "-" + ("00" + (date.getMonth() + 1)).slice(-2) + "-" + ("00" + date.getDate()).slice(-2)))
+        meta(property="article:section", content=category.name)
+        meta(property="article:author", content="https://fold.com.br/sobre.html")
+
+        meta(property="og:title", content="Fold | " + title)
+        meta(property="og:description", content=slug)
+
+        meta(property="og:image", content=thumbnail.og)
+
+        link(rel="stylesheet", href="/css/post.css")
+
+        link(rel="stylesheet", href="/css/highlight_gruvbox-dark.css")
+        script(src="/js/highlight.js")
+
+    body
+        header
+            .img
+                img(src=thumbnail.full)
+                .border(style='background-color:' + category.data.color)
+            .meta
+                .post
+                    a(href='#back') < Voltar
+                    h1=title
+                    .date=("00" + date.getDate()).slice(-2) + ' de ' + ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'][date.getMonth()] + ' de ' + date.getFullYear()
+                .category(style='color:' + category.data.color)
+                    img(src='/img/logo-' + category.data.logo + '.svg')
+                    .content(style='color:' + category.data.color)
+                        h2
+                            | Fold
+                            span=category.name
+                        h3=category.data.motto
+
+        main
+            article!=text
+        
+        script
+            | hljs.initHighlightingOnLoad();

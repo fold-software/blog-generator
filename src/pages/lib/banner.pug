@@ -1,0 +1,16 @@
+header
+    .logo
+        img(src='/img/' + banner.logo + '.svg')
+        .content
+            h1
+                | Fold
+                span= banner.extra
+            h2= banner.motto
+    nav
+        p Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação.
+        ul
+            li: a(href='/', class=(banner.atual == '/index.html' ? 'atual' : '')) Home
+            li: a(href='/design/', class=(banner.atual == '/design/' ? 'atual' : '')) Design
+            li: a(href='/desenvolvimento/', class=(banner.atual == '/desenvolvimento/' ? 'atual' : '')) Desenvolvimento
+            li: a(href='/arte-matematica/', class=(banner.atual == '/arte-matematica/' ? 'atual' : '')) Arte & Matemática
+            li: a(href='/sobre.html', class=(banner.atual == 'sobre' ? 'atual' : '')) Sobre

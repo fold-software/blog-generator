@@ -1,0 +1,31 @@
+doctype html
+html(lang="pt")
+    head
+        include lib/head.pug
+        
+        link(rel='canonical', href="https://fold.com.br/sobre.html")
+
+        title Fold | Sobre o Blog
+        meta(name="description", content="Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação.")
+
+        meta(property="og:type", content="profile")
+        meta(property="profile:first_name", content="Fold")
+        meta(property="profile:username", content="foldblog")
+        
+        meta(property="og:title", content="Fold | Sobre")
+        meta(property="og:description", content="Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação.")
+
+        meta(property="og:image", content="https://fold.com.br/img/open-graph-sobre.jpg")
+        meta(property="og:image:alt", content="Fold, keep it real!")
+
+        link(rel="stylesheet", href="css/about.css")
+    body
+        - var banner = {logo: 'logo-inverse', extra: '', motto: 'keep it real', atual: 'sobre'}
+        include lib/banner.pug
+
+        main
+            h1 Um Pouco Sobre o Blog
+            article
+                p Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação. O blog surgiu como uma tentativa de experimentar novas ideias, explorar novos conceitos e expandir o conhecimento alternativo.
+                p Sem preocupação com otimizações, linguagens de programação, softwares de design ou qual é o mais novo framework que compete com React. As postagens, em teoria semanais, tem um objetivo geral de exploração e compreensão, um foco em buscar responder os porques.
+                p Se você como eu gosta do estranho e peculiar, talvez ache alguma coisa interessante aqui.

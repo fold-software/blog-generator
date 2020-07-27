@@ -1,0 +1,131 @@
+header 
+    display flex
+    align-items start
+
+    padding 1vw 10vw
+
+    @media screen and (max-width: 600px)
+        flex-direction column
+
+    @media screen and (min-width: 600px)
+        align-items center
+
+    .logo
+        flex 2
+
+        display flex
+        align-items center 
+
+        img
+            flex 0 0 35%
+            margin-right 10%
+            max-height 100%
+            max-width 100%
+
+            @media screen and (max-width: 600px)
+                max-height 8vh
+
+    .content
+        h1
+            margin 0
+
+            font-family 'Quicksand'
+            font-size 5vw
+            variant-weight 900
+
+            letter-spacing 0.055em
+
+            @media screen and (min-width: 600px)
+                font-size 3vw
+
+            span
+                margin-left 1em
+
+                font-size 2vw
+                variant-weight 300
+
+                @media screen and (min-width: 600px)
+                    font-size 1vw
+
+        h2
+            margin 0
+
+            font-family 'Quicksand'
+            font-size 2.5vw
+            variant-weight 200
+
+            letter-spacing 0.1em
+
+            white-space nowrap
+
+            @media screen and (min-width: 600px)
+                margin-bottom 2vh
+    
+    nav
+        flex 1
+        position relative
+
+        @media screen and (min-width: 600px)
+            padding-left 2vw
+
+            &:before
+                content ""
+                display block
+
+                absolute top 0 left 0
+                
+                width 2px
+                height 100%
+                border-radius 9999px
+        
+        p
+            font-family 'Quicksand'
+            font-size 3vw
+            line-height 1.5
+            margin-bottom 0
+            
+            text-align justify
+
+            @media screen and (min-width: 600px)
+                font-size 1vw
+            
+            @media screen and (max-width: 600px)
+                margin-top 2vh
+        
+        ul
+            list-style none
+            padding 0
+
+            @media screen and (max-width: 600px)
+                display flex
+                justify-content space-around
+                flex-wrap wrap
+                margin 0
+                margin-top 2vh
+                margin-bottom 1vh
+
+            li
+                margin 0.2em 0
+
+                font-family 'Quicksand'
+                font-size 3vw
+                letter-spacing 0.115em
+
+                @media screen and (min-width: 600px)
+                    font-size 1.2vw
+                
+                @media screen and (max-width: 600px)
+                    flex 0 0 30%
+                    white-space nowrap
+
+                a
+                    text-decoration none
+                    transition color 0.2s, font-weight 0.3s, font-variation-settings 0.3s, margin 0.3s
+                    
+                    &:hover
+                        margin-left 0.2em
+                        variant-weight 500
+                    
+                    &.atual
+                        variant-weight 700
+

@@ -323,12 +323,6 @@ function build_stylesheets(file) {
         .use(nib())
         .import('nib')
     
-    for (let key in CONFIG.data) {
-        if (CONFIG.data.hasOwnProperty(key)) {
-            let value = CONFIG.data[key];
-            css.define(key, value);
-        }
-    }
 
     fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, CONFIG.dir.output.css, style.split('.').slice(0, -1).join('.') + '.css'), css.render());
     
@@ -358,13 +352,9 @@ function build_scripts(file) {
     ]);
     coffee_src = coffee_src.stdout.toString().split('\n').slice(0, -2).join('\n');
 
-    for (let key in CONFIG.data) {
-        if (CONFIG.data.hasOwnProperty(key))
-            coffee_src = `${key} = ${JSON.stringify(CONFIG.data[key])};\n` + coffee_src;
-    }
     let js_src = coffee.compile(coffee_src, {bare: true});
     let js_min = uglify.minify(js_src, {
-        compress: { toplevel: true, unused: true, dead_code: true, drop_console: true },
+        compress: { unused: true, dead_code: true, drop_console: true },
         mangle: false
     });
     fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, CONFIG.dir.output.javascript, script.split('.').slice(0, -1).join('.') + '.js'), js_min.code);
@@ -401,7 +391,6 @@ for (let page of CONFIG.pages.static) {
         let src = fs.readFileSync(path.join(__basedir, CONFIG.dir.preprocessed.pages, file), 'utf8');
         
         let fn = pug.compile( src, { basedir: path.join(__basedir, CONFIG.dir.preprocessed.pages), filename: path.join(__basedir, CONFIG.dir.preprocessed.pages, file) });
-        let html = fn(CONFIG.data);
 
         fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, routing + '.html'), html);
 

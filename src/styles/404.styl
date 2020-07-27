@@ -1,0 +1,70 @@
+@import 'lib/font_face.styl'
+@import 'lib/color.styl'
+
+reset-html5()
+
+body, html
+    margin 0
+    padding 0
+
+body
+    background-image url('/img/bg-404.jpg')
+
+main
+    margin 10vh 20vw 
+
+    width 60vw
+    height 80vh
+
+    display flex
+    align-items center 
+    justify-content center
+
+    @media screen and (max-width: 600px)
+        flex-direction column
+    
+    @media screen and (min-width: 600px)
+        margin 33vh 23vw
+
+        width 44vw
+        height 34vh
+
+    img
+        max-height 100%
+        max-width 100%
+
+        @media screen and (min-width: 600px)
+            flex 0 0 50%
+
+            margin-right 10%
+
+    .content
+        color colors_fold_black
+
+        h1
+            margin 0
+
+            font-family 'Quicksand'
+            font-size 22vw
+            variant-weight 900
+
+            letter-spacing 0.055em
+            text-align center
+
+            @media screen and (min-width: 600px)
+                font-size 8vw
+
+        h2
+            margin 0
+            margin-top -1vh
+            margin-bottom 2vh
+
+            font-family 'Quicksand'
+            font-size 6vw
+            variant-weight 300
+
+            letter-spacing 0.055em
+            text-align center
+
+            @media screen and (min-width: 600px)
+                font-size 1.5vw

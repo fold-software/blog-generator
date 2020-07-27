@@ -1,0 +1,37 @@
+doctype html
+html(lang="pt")
+    head
+        include lib/head.pug
+        
+        link(rel='canonical', href="https://fold.com.br" + route)
+
+        title="Fold" + (data.index ? "" : " | " + name)
+        meta(name="description", content=data.description)
+
+        meta(property="og:type", content="website")
+        
+        meta(property="og:title", content="Fold" + (data.index ? "" : "|" + name))
+        meta(property="og:description", content=data.description)
+
+        meta(property="og:image", content="https://fold.com.br/img/" + data.og)
+        meta(property="og:image:alt", content=data.motto)
+
+        link(rel="stylesheet", href="/css/index.css")
+    body(style='--main-color:' + data.color + "; --header-image: url('/img/" + data.header + "')")
+        - var banner = {logo: 'logo-' + data.logo, extra: (data.index ? "" : name), motto: data.motto, atual: route}
+        include lib/banner.pug
+
+        main
+            each post in posts
+                .post
+                    .img
+                        img(src=post.thumbnail.miniature)
+                        .border(style='background-color:' + post.category.data.color)
+                    .info
+                        h2=post.title
+                        .date=("00" + post.date.getDate()).slice(-2) + ' de ' + ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'][post.date.getMonth()] + ' de ' + post.date.getFullYear()
+                        .category(style='color:' + post.category.data.color)=post.category.name
+                    .text
+                        p=post.slug
+                        hr(style='background-color:' + post.category.data.color)
+                        a(href=post.url, style='background-color:' + post.category.data.color) Leia Mais

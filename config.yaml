@@ -33,6 +33,13 @@ video_options:
     suffix: _poster
 
 image_options:
+  extra:
+    miniature:
+      width: 720
+      height: 512
+    opengraph:
+      width: 1200
+      height: 627
   scaling:
     width: 1440
     height: 1280
@@ -48,24 +55,104 @@ watch:
   server:
     port: 8080
 
-# Misc data, passed to every build process as variables
-data: 
-  colors_fold_black: "#1D1D1F"
-
 # Page structure
 pages:
   static:
     -
-      route: 'index'
-      file: 'in_construction.pug'
-      sitemap:
-        canonical: ''
-        priority: 0.8
-        frequency: daily
+      route: index_building
+      file: in_construction.pug
+      sitemap: FALSE
     -
       route: '404'
-      file: 'not_found.pug'
-      sitemap: FALSE
+      file: not_found.pug
+      sitemap: 
+        priority: 0.1
+        frequency: yearly
+    -
+      route: sobre
+      file: about.pug
+      sitemap: 
+        priority: 0.3
+        frequency: yearly
+  blog:
+    indexing:
+      route: index
+      file: post_index.pug
+      sitemap:
+        canonical: ''
+        priority: 0.7
+        frequency: weekly
+      data:
+        color: '#1D1D1F'
+        logo: base
+        motto: Keep it simpe
+        header: header-index.jpg
+        index: TRUE
+        
+    posts:
+      file: individual_post.pug
+      sitemap:
+        priority: 0.9
+        frequency: weekly
+
+    structure:
+      base: posts
+      categories:
+        -
+          name: Etc.
+          folder: misc
+          index: 
+            route: extra
+            generate: FALSE
+          data:
+            color: '#1D1D1F'
+            logo: base
+            motto: Keep it simple
+        -
+          name: Desenvolvimento
+          folder: dev
+          index: 
+            route: desenvolvimento
+            generate: TRUE
+          sitemap:
+            canonical: 'desenvolvimento/'
+            priority: 0.5
+            frequency: weekly
+          data:
+            color: '#A51313'
+            logo: red
+            motto: Keep it functional
+            header: header-dev.jpg
+        -
+          name: Design
+          folder: design
+          index: 
+            route: design
+            generate: TRUE
+          sitemap:
+            canonical: 'design/'
+            priority: 0.5
+            frequency: weekly
+          data:
+            color: '#471784'
+            logo: purple
+            motto: Keep it pretty
+            header: header-art.jpg
+        -
+          name: Arte & Matemática
+          folder: math
+          index: 
+            route: arte-matematica
+            generate: TRUE
+          sitemap:
+            canonical: arte-matematica
+            priority: 0.5
+            frequency: weekly
+          data:
+            color: '#81D11A'
+            logo: green
+            motto: Keep it interesting
+            header: header-math.jpg
 
 # Other website files
 cname: fold.com.br

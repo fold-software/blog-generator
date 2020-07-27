@@ -1,0 +1,25 @@
+doctype html
+html(lang="pt")
+    head
+        include lib/head.pug
+        
+        link(rel='canonical', href="https://fold.com.br/404.html")
+
+        title Fold | 404 - Página não encontrada
+        meta(name="description", content="Ops! A página que você procura não foi encontrada.")
+        
+        meta(property="og:type", content="website")
+
+        meta(property="og:title", content="Página não Encontrada")
+        meta(property="og:description", content="Ops! A página que você procura não foi encontrada.")
+
+        meta(property="og:image", content="https://fold.com.br/img/open-graph.jpg")
+        meta(property="og:image:alt", content="Fold, keep it simple!")
+
+        link(rel="stylesheet", href="/css/404.css")
+    body
+        main
+            img(src='/img/logo-base.svg', alt='Fold logo')
+            .content
+                h1 404!
+                h2 Página não encontrada

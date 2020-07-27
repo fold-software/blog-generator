@@ -6,13 +6,22 @@ html(lang="pt")
         link(rel='canonical', href="https://fold.com.br/")
 
         title Fold | Em construção
+        meta(name="description", content="Em breve: Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação.")
 
-        link(rel="stylesheet", href="css/in_construction.css")
+        meta(property="og:type", content="website")
+        
+        meta(property="og:title", content="Em Breve: Fold")
+        meta(property="og:description", content="Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação.")
+
+        meta(property="og:image", content="https://fold.com.br/img/open-graph.jpg")
+        meta(property="og:image:alt", content="Fold, keep it simple!")
+
+        link(rel="stylesheet", href="css/in-construction.css")
     body
-        video(autoplay, playsinline, loop, muted, poster="/img/construction_banner_poster.jpg")
-            source(src="/img/construction_banner.mp4", type="video/mp4")
+        video(autoplay, playsinline, loop, muted, poster="/img/construction-banner_poster.jpg")
+            source(src="/img/construction-banner.mp4", type="video/mp4")
         main
-            img(src='/img/logo_base.svg', alt='Fold logo')
+            img(src='/img/logo-base.svg', alt='Fold logo')
             .content
                 h1 Fold
                 h2 Em construção
