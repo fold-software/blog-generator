@@ -87,13 +87,15 @@ pages:
         logo: base
         motto: Keep it simpe
         header: header-index.jpg
+        og: open-graph.jpg
         index: TRUE
+        description: "Explore novos conceitos em Desenvolvimento, Design e Matemática Artistica de maneira prática com o blog Fold."
         
     posts:
       file: individual_post.pug
       sitemap:
         priority: 0.9
-        frequency: weekly
+        frequency: monthly
 
     structure:
       base: posts
@@ -104,6 +106,7 @@ pages:
           index: 
             route: extra
             generate: FALSE
+          sitemap: FALSE
           data:
             color: '#1D1D1F'
             logo: base
@@ -123,6 +126,8 @@ pages:
             logo: red
             motto: Keep it functional
             header: header-dev.jpg
+            og: open-graph-dev.jpg
+            description: "Desenvolvimento é uma ciência e uma arte, se aprofunde em novas técnicas de programação e teorias de algoritmos em geral."
         -
           name: Design
           folder: design
@@ -138,6 +143,8 @@ pages:
             logo: purple
             motto: Keep it pretty
             header: header-art.jpg
+            og: open-graph-art.jpg
+            description: "Tudo que não é natural é um produto de design, venha observar e apreciar os conceitos fundamentais da nossa sociedade."
         -
           name: Arte & Matemática
           folder: math
@@ -153,6 +160,8 @@ pages:
             logo: green
             motto: Keep it interesting
             header: header-math.jpg
+            og: open-graph-math.jpg
+            description: "A matemática é o idioma do universo, explore a beleza emergente e se fascine com o infinito!"
 
 # Other website files
 cname: fold.com.br

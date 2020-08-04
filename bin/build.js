@@ -511,6 +511,52 @@ for (let page of CONFIG.pages.static) {
 }
 logger.info(`Generated static pages on sitemap.xml`);
 
+logger.info(`Adding blog pages to sitemap.xml`);
+if(CONFIG.pages.blog.indexing.sitemap) {
+    logger.info(`Adding main blog index to sitemap.xml`);
+    sitemap += '<url>'
+    
+    if(CONFIG.pages.blog.indexing.canonical !== undefined) sitemap += `<loc>https://www.fold.com.br/${CONFIG.pages.blog.indexing.canonical}</loc>`
+    else sitemap += `<loc>https://www.fold.com.br/${CONFIG.pages.blog.indexing.route}.html</loc>`
+
+    if(CONFIG.pages.blog.indexing.sitemap.frequency !== undefined) sitemap += `<changefreq>${CONFIG.pages.blog.indexing.sitemap.frequency}</changefreq>`
+    if(CONFIG.pages.blog.indexing.sitemap.priority !== undefined) sitemap += `<priority>${CONFIG.pages.blog.indexing.sitemap.priority}</priority>`
+
+    sitemap += '</url>'
+    logger.info(`Main blog index added to sitemap.xml`);
+}
+
+for (let page of CONFIG.pages.blog.structure.categories) {
+    if(page.sitemap) {
+        logger.info(`Adding index for ${page.name} to sitemap.xml`);
+        sitemap += '<url>'
+        
+        if(page.sitemap.canonical !== undefined) sitemap += `<loc>https://www.fold.com.br/${page.sitemap.canonical}</loc>`
+        else sitemap += `<loc>https://www.fold.com.br/${page.route}.html</loc>`
+
+        if(page.sitemap.frequency !== undefined) sitemap += `<changefreq>${page.sitemap.frequency}</changefreq>`
+        if(page.sitemap.priority !== undefined) sitemap += `<priority>${page.sitemap.priority}</priority>`
+
+        sitemap += '</url>'
+        logger.info(`Index for ${page.name} added to sitemap.xml`);
+    }
+}
+
+if(CONFIG.pages.blog.posts.sitemap) {
+    for (let post of full_post_list) {
+            logger.info(`Adding post ${post.title} to sitemap.xml`);
+            sitemap += '<url>'
+            sitemap += `<loc>https://www.fold.com.br${post.url}</loc>`
+
+            if(CONFIG.pages.blog.posts.sitemap.frequency !== undefined) sitemap += `<changefreq>${CONFIG.pages.blog.posts.sitemap.frequency}</changefreq>`
+            if(CONFIG.pages.blog.posts.sitemap.priority !== undefined) sitemap += `<priority>${CONFIG.pages.blog.posts.sitemap.priority}</priority>`
+
+            sitemap += '</url>'
+            logger.info(`${post.title} added to sitemap.xml`);
+        }
+}
+logger.info(`Blog pages added on sitemap.xml`);
+
 sitemap += '</urlset>'
 logger.info(`Generated sitemap.xml`);
 

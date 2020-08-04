@@ -17,6 +17,8 @@ html(lang="pt")
         meta(property="og:image:alt", content=data.motto)
 
         link(rel="stylesheet", href="/css/index.css")
+        script(src="/js/index.js", defer)
+
     body(style='--main-color:' + data.color + "; --header-image: url('/img/" + data.header + "')")
         - var banner = {logo: 'logo-' + data.logo, extra: (data.index ? "" : name), motto: data.motto, atual: route}
         include lib/banner.pug
