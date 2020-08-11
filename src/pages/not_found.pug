@@ -7,19 +7,31 @@ html(lang="pt")
 
         title Fold | 404 - Página não encontrada
         meta(name="description", content="Ops! A página que você procura não foi encontrada.")
+        meta(name="theme-color" content="#FCFCFC")
         
         meta(property="og:type", content="website")
 
         meta(property="og:title", content="Página não Encontrada")
         meta(property="og:description", content="Ops! A página que você procura não foi encontrada.")
+        meta(property="og:url", href="https://fold.com.br/404.html")
 
         meta(property="og:image", content="https://fold.com.br/img/open-graph.jpg")
         meta(property="og:image:alt", content="Fold, keep it simple!")
 
         link(rel="stylesheet", href="/css/404.css")
+
+        script(type="application/ld+json")
+            | {
+            |     "@context":"http://schema.org",
+            |     "@type": "WebPage",
+            |     "name": "Fold 404 | Página não encontrada",
+            |     "description": "A página que você procura não foi encontrada.",
+            |     "publisher": { "@id": "https://fold.com.br/#organization" },
+            |     "mainEntityOfPage": "True"
+            | }
     body
         main
-            img(src='/img/logo-base.svg', alt='Fold logo')
+            img(src='/img/logo-base.svg', alt='Fold')
             .content
                 h1 404!
                 h2 Página não encontrada

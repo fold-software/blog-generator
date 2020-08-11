@@ -42,10 +42,10 @@ scroll = (TIME_NOW) ->
     u("main").nodes[0].scrollLeft += SCROLL_SPEED * TIME_DELTA
     SCROLL_SPEED *= Math.pow(SCROLL_FRICTION, TIME_DELTA)
 
-    if Math.abs SCROLL_SPEED < SCROLL_MIN_SPEED
+    if (Math.abs SCROLL_SPEED) < SCROLL_MIN_SPEED
         SCROLL_SPEED = 0
 
-    if Math.abs SCROLL_SPEED > SCROLL_MAX_SPEED
+    if (Math.abs SCROLL_SPEED) > SCROLL_MAX_SPEED
         SCROLL_SPEED = SCROLL_MAX_SPEED * Math.sign(SCROLL_SPEED)
 
     requestAnimationFrame scroll
@@ -55,6 +55,10 @@ requestAnimationFrame scroll
 resize = -> 
     u ".post"
         .each (el) ->
+            if u(el).hasClass 'destaque'
+                u el
+                    .addClass 'resizing'
+
             p_el = u el
                 .find '.text p'
             
@@ -82,6 +86,18 @@ resize = ->
 
                 u p_el
                     .html pre.join(' ') + '<span class="elipsis"> ... </span> <span class="overflow">' + pos.join(' ') + '</span>'
+            
+            if u(el).hasClass 'destaque'
+                u el
+                    .removeClass 'resizing'
 
 window.addEventListener 'resize', resize
 window.addEventListener 'load', resize
+
+u ".post .img, .post .info, .post p"
+    .handle 'click', ->
+        u this
+            .closest '.post'
+            .find 'a'
+            .nodes[0]
+            .click()

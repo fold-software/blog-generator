@@ -7,6 +7,7 @@ html(lang="pt")
 
         title Fold | Sobre o Blog
         meta(name="description", content="Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação.")
+        meta(name="theme-color", content="#1D1D1F")
 
         meta(property="og:type", content="profile")
         meta(property="profile:first_name", content="Fold")
@@ -14,11 +15,23 @@ html(lang="pt")
         
         meta(property="og:title", content="Fold | Sobre")
         meta(property="og:description", content="Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação.")
+        meta(property="og:url", content="https://fold.com.br/sobre.html")
 
         meta(property="og:image", content="https://fold.com.br/img/open-graph-sobre.jpg")
         meta(property="og:image:alt", content="Fold, keep it real!")
-
+        
         link(rel="stylesheet", href="css/about.css")
+
+        script(type="application/ld+json")
+            | {
+            |     "@context":"http://schema.org",
+            |     "@type": "WebPage",
+            |     "name": "Fold | Sobre",
+            |     "description": "Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação.",
+            |     "publisher": { "@id": "https://fold.com.br/#organization" },
+            |     "mainEntityOfPage": "True"
+            | }
+            
     body
         - var banner = {logo: 'logo-inverse', extra: '', motto: 'keep it real', atual: 'sobre'}
         include lib/banner.pug
@@ -27,5 +40,11 @@ html(lang="pt")
             h1 Um Pouco Sobre o Blog
             article
                 p Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação. O blog surgiu como uma tentativa de experimentar novas ideias, explorar novos conceitos e expandir o conhecimento alternativo.
-                p Sem preocupação com otimizações, linguagens de programação, softwares de design ou qual é o mais novo framework que compete com React. As postagens, em teoria semanais, tem um objetivo geral de exploração e compreensão, um foco em buscar responder os porques.
-                p Se você como eu gosta do estranho e peculiar, talvez ache alguma coisa interessante aqui.
+                p A ideia é não se preocupar tanto com #[em trends] e o que está em alta no momento, mas sim conceitos e tecnicas que são em sua maioria independentes da implementação. Isso não significa que são coisas velhas, mas que são coisas úteis independentemente da sua aplicação.
+                p O Fold é um blog para aqueles que gostam de explorar e compreender os comos e porques, um blog que satisfaz sua criança interior que tem um impeto exploratório e uma série irritante de "Mas porque?". 
+                h2 Sobre o Autor
+                p Oi, tenho 24 anos e sou um desenvolvedor web full-stack, mas entusiasta e autodidata como designer e matemático. Tenho um técnico em Informática e bacharelado em Ciência da Computação, programador à quase 15 anos e freelancer à 10.
+                h2 Sobre a Tecnologia do Blog
+                p O Blog é feito de páginas estáticas geradas usando uma engine customizada feita em #[a(herf='https://nodejs.org/', target='_blank') NodeJs], as páginas são renderizadas à partir de #[a(herf='https://pugjs.org/', target='_blank') Pug/Jade], #[a(herf='https://stylus-lang.com/', target='_blank') Stylus] e #[a(herf='https://coffeescript.org/', target='_blank') CoffeeScript], e servidas no #[a(herf='https://pages.github.com/') GitHub Pages] através do #[a(herf='https://www.cloudflare.com/') CloudFlare].
+                p As imagens de todos os posts e headers são geradas via código ou obtidas no #[a(herf='https://unsplash.com/') Unsplash].
+                p Você pode ver o código fonte no #[a(herf='https://') GitHub], mas já aviso que pode estar um pouco #[del desorganizado] desatualizado.

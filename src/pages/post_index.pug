@@ -7,11 +7,13 @@ html(lang="pt")
 
         title="Fold" + (data.index ? "" : " | " + name)
         meta(name="description", content=data.description)
+        meta(name="theme-color" content=data.color)
 
         meta(property="og:type", content="website")
         
-        meta(property="og:title", content="Fold" + (data.index ? "" : "|" + name))
+        meta(property="og:title", content="Fold | " + (data.index ? "Um espaço digital criativo" : name))
         meta(property="og:description", content=data.description)
+        meta(property="og:url", content="https://fold.com.br" + route)
 
         meta(property="og:image", content="https://fold.com.br/img/" + data.og)
         meta(property="og:image:alt", content=data.motto)
@@ -19,15 +21,25 @@ html(lang="pt")
         link(rel="stylesheet", href="/css/index.css")
         script(src="/js/index.js", defer)
 
+        script(type="application/ld+json")
+            | {
+            |     "@context":"http://schema.org",
+            |     "@type": "WebPage",
+            ='     "name": "Fold |' + (data.index ? "Um espaço digital criativo" : name) + '",'
+            ='     "description": "' + data.description + '",'
+            |     "publisher": { "@id": "https://fold.com.br/#organization" },
+            |     "mainEntityOfPage": "True"
+            | }
+
     body(style='--main-color:' + data.color + "; --header-image: url('/img/" + data.header + "')")
         - var banner = {logo: 'logo-' + data.logo, extra: (data.index ? "" : name), motto: data.motto, atual: route}
         include lib/banner.pug
 
         main
             each post in posts
-                .post
+                .post(class=(post.data.featured ? "destaque" : ""))
                     .img
-                        img(src=post.thumbnail.miniature)
+                        img(src=post.thumbnail.miniature, alt=post.data.thumbnail_alt)
                         .border(style='background-color:' + post.category.data.color)
                     .info
                         h2=post.title

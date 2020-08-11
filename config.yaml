@@ -146,13 +146,13 @@ pages:
             og: open-graph-art.jpg
             description: "Tudo que não é natural é um produto de design, venha observar e apreciar os conceitos fundamentais da nossa sociedade."
         -
-          name: Arte & Matemática
+          name: Exploração
           folder: math
           index: 
-            route: arte-matematica
+            route: exploracao
             generate: TRUE
           sitemap:
-            canonical: arte-matematica
+            canonical: 'exploracao/'
             priority: 0.5
             frequency: weekly
           data:
@@ -173,3 +173,16 @@ robots:
 favicon:
   input: src/assets/favicon.ico
   output: favicon.ico
+rss:
+    generate: TRUE
+    file: rss.xml
+    amount: 10
+    info:
+      title: Fold
+      link: htpps://fold.com.br
+      description: "Explore novos conceitos em Desenvolvimento, Design e Matemática Artistica de maneira prática com o blog Fold."
+      language: "pt-br"
+      category: "Desenvolvimento/Design"
+    image:
+      title: '>_'
+      image: rss.jpg

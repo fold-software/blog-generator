@@ -2,3 +2,5 @@ title: Lorem Ipusm dolor sit amet
 slug: Lorem ipsum dolor sit amet, augue. Fusce convallis eleifend mauris, non lobortis nibh feugiat nec. Nunc imperdiet enim at mi faucibus imperdiet. Pellentesque vestibulum feugiat urna id feugiat. Ut tristique libero.
 prefix: lorem
 date: 2020-07-02
+data:
+  thumbnail_alt: "Imagem de Testes. Páginas de jornais"

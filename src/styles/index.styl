@@ -58,6 +58,65 @@ main
         background-color white
 
         box-shadow 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+        transition 0.3s transform
+        
+        &.destaque
+            @media screen and (max-width: 600px)
+                width calc(100% + 10vw)
+                border-radius 0
+                margin-top 3.5vh
+                margin-bottom 0.5vh
+
+            @media screen and (min-width: 600px)
+                flex-wrap wrap
+                flex-basis 36rem
+
+                &.resizing
+                    .img 
+                        flex 0 0 99%
+                        transform none
+                    
+                    .text
+                        max-height calc(100% - 6rem)
+                
+                .img 
+                    flex 0 0 100%
+                    width 15rem
+
+                    transform rotate(0.8deg) scale(1.05)
+
+                    .border
+                        top 0
+                        right 0
+                        bottom auto
+                        left auto
+                        
+                        width 1.2rem
+                        height 100%
+
+                        &:before
+                            width 0.5rem
+                            height 100%
+
+                            top 0
+                            right 1.5em
+
+                            bottom auto
+                            left auto
+                
+                .info
+                    display block
+                    width calc(100% - 17rem)
+
+                    padding 0
+                    margin 1rem
+                
+                .text
+                    width calc(100% - 17rem)
+                    padding 0
+
+                    margin-left 1rem
         
         @media screen and (max-width: 600px)
             margin-top 3vh
@@ -65,6 +124,9 @@ main
         @media screen and (min-width: 600px)
             margin-right 1.5vw
             flex-basis 22rem
+        
+        &:hover
+            transform scale(1.02)
 
         *
             flex 0 0 auto
@@ -79,6 +141,8 @@ main
             box-shadow 0px 4px 4px rgba(0, 0, 0, 0.25)
 
             margin-bottom 5%
+
+            cursor pointer
 
             img
                 min-width 100%
@@ -112,6 +176,8 @@ main
             align-items center
 
             padding 0 5%
+
+            cursor pointer
 
             h2
                 margin 0
@@ -153,6 +219,8 @@ main
                 line-height 1.5
 
                 margin-bottom 0
+
+                cursor pointer
 
                 .overflow
                     display none

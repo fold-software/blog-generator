@@ -346,21 +346,21 @@ for (let category of CONFIG.pages.blog.structure.categories) {
                 sharp(fs.readFileSync(path.join(CONFIG.pages.blog.structure.base, category.folder, post, 'thumbnail.jpg')))
                     .resize(CONFIG.image_options.extra.miniature.width, CONFIG.image_options.extra.miniature.height, {fit: sharp.fit.cover, withoutEnlargement: true})
                     .toFormat(CONFIG.image_options.format.filetype, CONFIG.image_options.format.options)
-                    .toFile(path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + '_thumbnail-miniature.' + CONFIG.image_options.format.extension))
+                    .toFile(path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + '_thumbnail-miniature' + CONFIG.image_options.format.extension))
             );
 
             deasync_p(
                 sharp(fs.readFileSync(path.join(CONFIG.pages.blog.structure.base, category.folder, post, 'thumbnail.jpg')))
                     .resize(CONFIG.image_options.extra.opengraph.width, CONFIG.image_options.extra.opengraph.height, {fit: sharp.fit.cover, withoutEnlargement: true})
                     .toFormat(CONFIG.image_options.format.filetype, CONFIG.image_options.format.options)
-                    .toFile(path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + '_open-graph.' + CONFIG.image_options.format.extension))
+                    .toFile(path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + '_open-graph' + CONFIG.image_options.format.extension))
             );
 
             deasync_p(
                 sharp(fs.readFileSync(path.join(CONFIG.pages.blog.structure.base, category.folder, post, 'thumbnail.jpg')))
                     .resize(CONFIG.image_options.scaling.width, CONFIG.image_options.scaling.height, {fit: sharp.fit.cover, withoutEnlargement: true})
                     .toFormat(CONFIG.image_options.format.filetype, CONFIG.image_options.format.options)
-                    .toFile(path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + '_thumbnail-fullsize.' + CONFIG.image_options.format.extension))
+                    .toFile(path.join(__basedir, CONFIG.dir.output.base, category.index.route, 'assets', post_info.prefix + '_thumbnail-fullsize' + CONFIG.image_options.format.extension))
             );
             logger.info(`${post} thumbnail generated`);
 
@@ -408,11 +408,15 @@ for (let category of CONFIG.pages.blog.structure.categories) {
                 slug: post_info.slug,
                 date: post_info.date,
                 url: category.index.route + '/' + post + '.html',
-                text: $.html(),
+                data: post_info.data,
+                text: {
+                    plain: $.text(),
+                    html: $.html()
+                },
                 thumbnail: {
-                    og: '/' + category.index.route + '/assets/' + post_info.prefix + '_open-graph.' + CONFIG.image_options.format.extension,
-                    full: '/' + category.index.route + '/assets/' + post_info.prefix + '_thumbnail-fullsize.' + CONFIG.image_options.format.extension,
-                    miniature: '/' + category.index.route + '/assets/' + post_info.prefix + '_thumbnail-miniature.' + CONFIG.image_options.format.extension
+                    og: '/' + category.index.route + '/assets/' + post_info.prefix + '_open-graph' + CONFIG.image_options.format.extension,
+                    full: '/' + category.index.route + '/assets/' + post_info.prefix + '_thumbnail-fullsize' + CONFIG.image_options.format.extension,
+                    miniature: '/' + category.index.route + '/assets/' + post_info.prefix + '_thumbnail-miniature' + CONFIG.image_options.format.extension
                 },
                 category: {
                     name: category.name,
@@ -425,9 +429,9 @@ for (let category of CONFIG.pages.blog.structure.categories) {
             logger.info(`Written blog post to file ${path.join(__basedir, CONFIG.dir.output.base, category.index.route, post + '.html')}`);
 
             post_info.thumbnail = {
-                og: '/' + category.index.route + '/assets/' + post_info.prefix + '_open-graph.' + CONFIG.image_options.format.extension,
-                full: '/' + category.index.route + '/assets/' + post_info.prefix + '_thumbnail-fullsize.' + CONFIG.image_options.format.extension,
-                miniature: '/' + category.index.route + '/assets/' + post_info.prefix + '_thumbnail-miniature.' + CONFIG.image_options.format.extension
+                og: '/' + category.index.route + '/assets/' + post_info.prefix + '_open-graph' + CONFIG.image_options.format.extension,
+                full: '/' + category.index.route + '/assets/' + post_info.prefix + '_thumbnail-fullsize' + CONFIG.image_options.format.extension,
+                miniature: '/' + category.index.route + '/assets/' + post_info.prefix + '_thumbnail-miniature' + CONFIG.image_options.format.extension
             }
 
             post_info.category = {
@@ -562,6 +566,53 @@ logger.info(`Generated sitemap.xml`);
 
 fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, 'sitemap.xml'), sitemap);
 logger.info(`Written sitemap.xml`);
+
+if(CONFIG.rss.generate) {
+    logger.info(`Generating RSS Feed`);
+    let rss = '<?xml version="1.0" encoding="utf-8"?><rss version="2.0"><channel>'
+
+    logger.info(`Adding basic info to RSS feed`);
+
+    rss += `<title> ${CONFIG.rss.info.title} </title>` 
+    rss += `<link> ${CONFIG.rss.info.link} </link>` 
+    rss += `<description> ${CONFIG.rss.info.description} </description>` 
+
+    if(CONFIG.rss.info.language !== undefined) rss += `<language> ${CONFIG.rss.info.language} </language>` 
+    if(CONFIG.rss.info.category !== undefined) rss += `<category> ${CONFIG.rss.info.category} </category>` 
+
+    rss += `<pubDate> ${(new Date()).toUTCString()} </pubDate>` 
+
+    rss += '<image>'
+    rss += `<title> ${CONFIG.rss.image.title} </title>` 
+    rss += `<url> ${CONFIG.rss.info.link}/img/${CONFIG.rss.image.title} </url>` 
+    rss += `<link> ${CONFIG.rss.info.link} </link>` 
+    rss += '<width> 144 </width><height> 50 </height>'
+    rss += '</image>' 
+
+    logger.info(`Adding blog posts to RSS feed`);
+    full_post_list.sort((a, b) => a.date < b.date ? 1 : -1);
+
+    for (let i = 0; i < CONFIG.rss.amount && i < full_post_list.length; i++) {
+        let post = full_post_list[i];
+
+        logger.info(`Adding post ${post.title} to RSS Feed`);
+        rss += '<item>'
+        rss += `<title> ${CONFIG.rss.image.title} </title>` 
+        rss += `<link> https://www.fold.com.br${post.url} </link>` 
+        rss += `<description> ${post.slug} </description>` 
+        rss += `<pubDate> ${post.date.toUTCString()} </pubDate>` 
+        rss += `<guid isPermaLink="true"> https://www.fold.com.br${post.url} </guid>`
+        rss += `<source> https://www.fold.com.br/${CONFIG.rss.file} </source>` 
+        rss += '</item>'
+        logger.info(`${post.title} added to RSS Feed`);
+    }
+
+    sitemap += '</channel></rss>'
+    logger.info(`Generated RSS feed`);
+
+    fs.writeFileSync(path.join(__basedir, CONFIG.dir.output.base, CONFIG.rss.file), rss);
+    logger.info(`Written RSS feed`);
+}
 
 logger.info(`Generating robots.txt`);
 robots = 'User-agent: *';

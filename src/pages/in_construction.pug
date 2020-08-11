@@ -7,21 +7,33 @@ html(lang="pt")
 
         title Fold | Em construção
         meta(name="description", content="Em breve: Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação.")
-
+        meta(name="theme-color", content="#FCFCFC")
+        
         meta(property="og:type", content="website")
         
         meta(property="og:title", content="Em Breve: Fold")
         meta(property="og:description", content="Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação.")
+        meta(property="og:url", href="https://fold.com.br/")
 
         meta(property="og:image", content="https://fold.com.br/img/open-graph.jpg")
         meta(property="og:image:alt", content="Fold, keep it simple!")
 
         link(rel="stylesheet", href="css/in-construction.css")
+
+        script(type="application/ld+json")
+            | {
+            |     "@context":"http://schema.org",
+            |     "@type": "WebPage",
+            |     "name": "Fold | Página em Construção",
+            |     "description": "Em breve: Fold é um espaço digital criativo. Um blog onde se aprende sobre design e programação através da experimentação.",
+            |     "publisher": { "@id": "https://fold.com.br/#organization" },
+            |     "mainEntityOfPage": "True"
+            | }
     body
         video(autoplay, playsinline, loop, muted, poster="/img/construction-banner_poster.jpg")
             source(src="/img/construction-banner.mp4", type="video/mp4")
         main
-            img(src='/img/logo-base.svg', alt='Fold logo')
+            img(src='/img/logo-base.svg', alt='>_')
             .content
                 h1 Fold
                 h2 Em construção
