@@ -449,6 +449,8 @@ for (let category of CONFIG.pages.blog.structure.categories) {
 
     if (category.index.generate) {
         logger.info(`Building blog category page`);
+        category_post_list.sort((a, b) => b.date.getTime() - a.date.getTime())
+
         let index_html = index_template({
             name: category.name,
             route: '/' + category.index.route + '/',
@@ -472,6 +474,7 @@ let index_blog = pug.compile(
     }
 );
 
+full_post_list.sort((a, b) => b.date.getTime() - a.date.getTime())
 let index_html = index_blog({
     route: '/' + CONFIG.pages.blog.indexing.route + '.html',
     data: CONFIG.pages.blog.indexing.data,
@@ -590,15 +593,13 @@ if(CONFIG.rss.generate) {
     rss += '</image>' 
 
     logger.info(`Adding blog posts to RSS feed`);
-    full_post_list.sort((a, b) => a.date < b.date ? 1 : -1);
-
     for (let i = 0; i < CONFIG.rss.amount && i < full_post_list.length; i++) {
         let post = full_post_list[i];
 
         logger.info(`Adding post ${post.title} to RSS Feed`);
         rss += '<item>'
         rss += `<title> ${CONFIG.rss.image.title} </title>` 
-        rss += `<link> https://www.fold.com.br${post.url} </link>` 
+        rss += `<link> https://www.fold.com.br${post.url} </link    >` 
         rss += `<description> ${post.slug} </description>` 
         rss += `<pubDate> ${post.date.toUTCString()} </pubDate>` 
         rss += `<guid isPermaLink="true"> https://www.fold.com.br${post.url} </guid>`

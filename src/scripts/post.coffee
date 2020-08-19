@@ -4,10 +4,14 @@ u "a[href='#back']"
 
 color = u(".border").nodes[0].style["background-color"]
 
-u document
-    .on 'scroll touchmove', ->
-        progress = window.scrollY /  window.scrollMaxY * 100
-        u "#progress"
-            .nodes[0]
-            .style
-            .background = "linear-gradient(to right, " + color + " " + progress + "%, white " + progress + "%)"
+updateProgressBar = ->
+    progress = window.scrollY /  window.scrollMaxY * 100
+    u "#progress"
+        .nodes[0]
+        .style
+        .background = "linear-gradient(to right, " + color + " " + progress + "%, white " + progress + "%)"
+
+    requestAnimationFrame updateScrollBar
+
+do updateProgressBar
+        

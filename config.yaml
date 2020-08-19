@@ -65,9 +65,7 @@ pages:
     -
       route: '404'
       file: not_found.pug
-      sitemap: 
-        priority: 0.1
-        frequency: yearly
+      sitemap: FALSE
     -
       route: sobre
       file: about.pug
@@ -184,5 +182,5 @@ rss:
       language: "pt-br"
       category: "Desenvolvimento/Design"
     image:
-      title: '>_'
+      title: 'Fold'
       image: rss.jpg

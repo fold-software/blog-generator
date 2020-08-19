@@ -12,22 +12,24 @@ meta(property="og:image:type", content="image/jpeg")
 meta(property="og:image:width", content="1200")
 meta(property="og:image:height", content="627")
 
+meta(property="fb:app_id", content="3200466463356142")
+
 script(src="/js/umbrella.js")
 
 link(rel="alternate", type="application/rss+xml", title="RSS Feed Fold" href="/rss.xml")
 
 script(type="application/ld+json")
     | {
-    |   "@id": "https://fold.com.br/#website"
+    |   "@id": "https://fold.com.br/#website",
     |   "@context": "http://schema.org",
     |   "@type": "WebSite",
     |   "name": "Fold",
-    |   "url": "https://fold.com.br",
+    |   "url": "https://fold.com.br"
     | }
 
 script(type="application/ld+json")
     | {
-    |   "@id": "https://fold.com.br/#organization"
+    |   "@id": "https://fold.com.br/#organization",
     |   "@context":"http://schema.org",
     |   "@type":"Organization",
     |   "name": "Fold",
@@ -38,12 +40,12 @@ script(type="application/ld+json")
     |       "width":"512",
     |       "height":"512"
     |   },
-    |   "sameAs": ["https://twitter.com/fold_software"],
+    |   "sameAs": ["https://twitter.com/fold_software", "https://www.facebook.com/fold.software/"]
     | }
 
 script(type="application/ld+json")
     | {
-    |   "@id": "https://fold.com.br/#author"
+    |   "@id": "https://fold.com.br/#author",
     |   "@context":"http://schema.org",
     |   "@type":"Person",
     |   "name": "Ygor de Paula",

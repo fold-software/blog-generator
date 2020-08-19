@@ -30,10 +30,10 @@ html(lang="pt")
             | {
             |     "@context":"http://schema.org",
             |     "@type": "BlogPosting",
-            ='     "image": "https://fold.com.br' + thumbnail.full + '",'
-            ='     "url": "https://fold.com.br' + thumbnail.full + '",'
-            ='     "headline": "' + title + '",'
-            ='     "datePublished": "' + date.toISOString() + '",'
+            !='     "image": "https://fold.com.br' + thumbnail.full + '",'
+            !='     "url": "https://fold.com.br' + thumbnail.full + '",'
+            !='     "headline": "' + title + '",'
+            !='     "datePublished": "' + date.toISOString() + '",'
             |     "inLanguage": "pt-BR",
             |     "isFamilyFriendly": "true",
             |     "copyrightYear": "2020",
@@ -41,8 +41,8 @@ html(lang="pt")
             |     "author": { "@id": "https://fold.com.br/#author" },
             |     "publisher": { "@id": "https://fold.com.br/#organization" },
             |     "mainEntityOfPage": "True",
-            ='     "articleSection": "' + category.name + '",'
-            ='     "articleBody": "' + text.plain + '",'
+            !='     "articleSection": "' + category.name + '",'
+            !='     "articleBody": "' + text.plain + '"'
             | }
 
     body
@@ -56,7 +56,7 @@ html(lang="pt")
                     h1=title
                     .date=("00" + date.getDate()).slice(-2) + ' de ' + ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'][date.getMonth()] + ' de ' + date.getFullYear()
                 .category(style='color:' + category.data.color)
-                    img(src='/img/logo-' + category.data.logo + '.svg', alt='>_')
+                    img(src='/img/logo-' + category.data.logo + '.svg', alt='Fold - ' + category.name)
                     .content(style='color:' + category.data.color)
                         h2
                             | Fold
@@ -65,6 +65,14 @@ html(lang="pt")
 
         main
             article!=text.html
+        
+        aside
+            a(href='http://twitter.com/share?url=' + encodeURIComponent('https://fold.com.br/' + url), target='_blank').twitter
+                img(src='/img/social-tw.svg', alt='Twitter')
+            a(href='https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent('https://fold.com.br/' + url), target='_blank').facebook
+                img(src='/img/social-fb.svg', alt='Facebook')
+            a(href='https://wa.me/?text=' + encodeURIComponent('https://fold.com.br/' + url), target='_blank').whatsapp
+                img(src='/img/social-wp.svg', alt='WhatsApp')
         
         #progress
 
