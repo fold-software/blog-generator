@@ -22,7 +22,7 @@ APIs existem para diversos serviços e portanto são implementadas de diversas m
 
 ## REST
 
-Uma arquitetura de API relativamente antiga, criada em 2000, mas ainda muito utilizada, a arquitetura REST, ou ***RE**presentational **S**tate **T**ransfer* é em principio um conjunto de seis "regras". Para que uma API seja *RESTfull* ela deve ser:
+Uma arquitetura de API relativamente antiga, criada em 2000, mas ainda muito utilizada, a arquitetura REST, ou ***RE**presentational **S**tate **T**ransfer*, é em principio um conjunto de seis "regras". Para que uma API seja *RESTfull* ela deve ser:
 
 1. Uniforme em relação à Interface
 2. Cliente-Servidor
@@ -37,13 +37,13 @@ Normalmente uma Web API em REST utiliza os verbos HTTP (GET, POST, PUT, PATCH, D
 
 A primeira arquitetura de APIs amplamente utilizada ***S**imple **O**bject **A**ccess **P**rotocol* ou SOAP é protocolo bem definido e estruturado para troca de mensagens entre aplicações via Web. O protocolo SOAP é rigido quanto a sua implementação e utilização, retirando várias escolhas do programador.
 
-SOAP usa o formato XML para transferência de mensagens, e por esse motivo possui mensagens muito verboas. O protocolo não foi abandonado mas é muito pouco utilizado no dia a dia.
+SOAP usa o formato XML para transferência de mensagens, e por esse motivo possui mensagens muito verbosas. O protocolo não foi abandonado mas é muito pouco utilizado no dia a dia.
 
 ## Graph-QL
 
 A novata do grupo, a arquitetura GraphQL surgiu com o objetivo de fornecer uma linguagem de consultas para APIs, ela se baseia fortemente no formato JSON e está começando a ser utilizada por ai.
 
-Apesar de recente, inovadora e prometer mil maravilhas a arquitetura ainda não encontrou muita utilização pública, isso não significa que não tenha atraido algumas randes empresas, apenas não espere encontrar esse tipo de API em todos os cantos.
+Apesar de recente, inovadora e prometer mil maravilhas a arquitetura ainda não encontrou muita utilização pública, isso não significa que não tenha atraido algumas grandes empresas, apenas não espere encontrar esse tipo de API em todos os cantos.
 
 ## SDKs e Bibliotecas
 
